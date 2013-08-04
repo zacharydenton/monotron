@@ -18,7 +18,7 @@
       <div id="controls">
         <div class="panel">
           <label>
-          <select>
+          <select id="mod">
             <option>Standby</option>
             <option>Pitch</option>
             <option>Cutoff</option>
@@ -30,7 +30,7 @@
           <h2>VCO</h2>
           <div class="knobs">
             <div class="knob">
-              <input type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
+              <input id="pitch" type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
               <label>Pitch</label>
             </div>
           </div>
@@ -39,11 +39,11 @@
           <h2>LFO</h2>
           <div class="knobs">
             <div class="knob">
-              <input type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
+              <input id="rate" type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
               <label>Rate</label>
             </div>
             <div class="knob">
-              <input type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
+              <input id="int" type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
               <label>Int.</label>
             </div>
           </div>
@@ -52,11 +52,11 @@
           <h2>VCF</h2>
           <div class="knobs">
             <div class="knob">
-              <input type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
+              <input id="cutoff" type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
               <label>Cutoff</label>
             </div>
             <div class="knob">
-              <input type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
+              <input id="peak" type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
               <label>Peak</label>
             </div>
           </div>
