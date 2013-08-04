@@ -5,19 +5,19 @@ module.exports = (grunt) ->
     coffee:
       compile:
         files:
-          'monotron.js': 'monotron.coffee'
+          'js/monotron.js': 'js/monotron.coffee'
     less:
       compile:
         files:
-          'monotron.css': 'monotron.less'
+          'css/monotron.css': 'css/monotron.less'
     watch:
       all:
-        files: ['monotron.coffee', 'monotron.less']
+        files: ['js/*.coffee', 'css/*.less']
         tasks: ['coffee', 'less']
     connect:
       server:
         options:
-          port: 9000
+          port: 1337
           hostname: '*'
 
   # These plugins provide necessary tasks.

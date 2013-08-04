@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Monotron</title>
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Audiowide' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/monotron.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="js/knob.js"></script>
+    <script src="js/monotron.js"></script>
+  </head>
+  <body>
+    <div id="monotron">
+      <div id="brand">
+        <h1 id="title">Monotron</h1>
+        <div id="description">Analogue Ribbon Synthesizer</div>
+      </div>
+      <div id="controls">
+        <div class="panel">
+          <label>
+          <select>
+            <option>Standby</option>
+            <option>Pitch</option>
+            <option>Cutoff</option>
+          </select>
+          <br />Mod
+          </label>
+        </div>
+        <div class="panel">
+          <h2>VCO</h2>
+          <div class="knobs">
+            <div class="knob">
+              <input type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
+              <label>Pitch</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>LFO</h2>
+          <div class="knobs">
+            <div class="knob">
+              <input type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
+              <label>Rate</label>
+            </div>
+            <div class="knob">
+              <input type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
+              <label>Int.</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>VCF</h2>
+          <div class="knobs">
+            <div class="knob">
+              <input type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
+              <label>Cutoff</label>
+            </div>
+            <div class="knob">
+              <input type="range" min="0" max="100" data-width="40" data-height="40" data-angleOffset="220" data-angleRange="280">
+              <label>Peak</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="keyboard">
+      </div>
+    </div>
+  </body>
+</html>
