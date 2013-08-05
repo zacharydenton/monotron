@@ -132,5 +132,24 @@ $ ->
   $("#peak").val 57
   $("#mod").val "Pitch"
 
+  # play note based on keyboard's keyCodes
+  playNote = (code) ->
+    # change this string to match qwerty layout to notes
+    notes = '1234567890qwertyuiopasdfghjklzxcvbnm'
+    note = notes.indexOf(String.fromCharCode(code).toLowerCase()) % 18
+    if note < 0 then note = code % 18
+    monotron.noteOn noteToFrequency 57 + note
+
+  # handle key press events
+  pressed = []
+  $(window).keydown (e) ->
+    code = e.keyCode
+    if pressed.indexOf(code) == -1 then pressed.push code
+    playNote code
+  $(window).keyup (e) ->
+    code = e.keyCode
+    if pressed.indexOf(code) >= 0 then pressed.splice(pressed.indexOf(code), 1)
+    if pressed.length < 1 then monotron.noteOff() else playNote pressed[pressed.length - 1]
+
   knopfs.forEach (knopf) ->
     knopf.changed 0
