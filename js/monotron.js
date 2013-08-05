@@ -101,7 +101,7 @@
   };
 
   $(function() {
-    var audioContext, keyboard, knopfs, masterGain, params;
+    var audioContext, keyboard, knopfs, masterGain, params, playNote, pressed;
     audioContext = new (typeof AudioContext !== "undefined" && AudioContext !== null ? AudioContext : webkitAudioContext)();
     window.monotron = new Monotron(audioContext);
     masterGain = audioContext.createGain();
@@ -172,6 +172,36 @@
     $("#cutoff").val(72);
     $("#peak").val(57);
     $("#mod").val("Pitch");
+    playNote = function(code) {
+      var note, notes;
+      notes = '1234567890qwertyuiopasdfghjklzxcvbnm';
+      note = notes.indexOf(String.fromCharCode(code).toLowerCase()) % 18;
+      if (note < 0) {
+        note = code % 18;
+      }
+      return monotron.noteOn(noteToFrequency(57 + note));
+    };
+    pressed = [];
+    $(window).keydown(function(e) {
+      var code;
+      code = e.keyCode;
+      if (pressed.indexOf(code) === -1) {
+        pressed.push(code);
+      }
+      return playNote(code);
+    });
+    $(window).keyup(function(e) {
+      var code;
+      code = e.keyCode;
+      if (pressed.indexOf(code) >= 0) {
+        pressed.splice(pressed.indexOf(code), 1);
+      }
+      if (pressed.length < 1) {
+        return monotron.noteOff();
+      } else {
+        return playNote(pressed[pressed.length - 1]);
+      }
+    });
     return knopfs.forEach(function(knopf) {
       return knopf.changed(0);
     });
