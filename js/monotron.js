@@ -26,14 +26,14 @@
         time = this.context.currentTime;
       }
       this.vco.frequency.setValueAtTime(frequency, time);
-      return this.output.gain.linearRampToValueAtTime(1.0, time + 0.05);
+      return this.output.gain.linearRampToValueAtTime(1.0, time + 0.1);
     };
 
     Monotron.prototype.noteOff = function(time) {
       if (time == null) {
         time = this.context.currentTime;
       }
-      return this.output.gain.linearRampToValueAtTime(0.0, time + 0.05);
+      return this.output.gain.linearRampToValueAtTime(0.0, time + 0.1);
     };
 
     Monotron.prototype.connect = function(target) {
@@ -101,10 +101,13 @@
   };
 
   $(function() {
-    var audioContext, keyboard, knopfs, params;
-    audioContext = new webkitAudioContext();
+    var audioContext, keyboard, knopfs, masterGain, params;
+    audioContext = new (typeof AudioContext !== "undefined" && AudioContext !== null ? AudioContext : webkitAudioContext)();
     window.monotron = new Monotron(audioContext);
-    monotron.connect(audioContext.destination);
+    masterGain = audioContext.createGain();
+    masterGain.gain.value = 0.7;
+    masterGain.connect(audioContext.destination);
+    monotron.connect(masterGain);
     keyboard = new RibbonKeyboard($('#keyboard'), monotron);
     params = {
       rate: {
@@ -164,11 +167,11 @@
       }
     });
     $("#pitch").val(57);
-    $("#rate").val(48);
-    $("#int").val(60);
-    $("#cutoff").val(44);
-    $("#peak").val(68);
-    $("#mod").val("Cutoff");
+    $("#rate").val(46);
+    $("#int").val(97);
+    $("#cutoff").val(72);
+    $("#peak").val(57);
+    $("#mod").val("Pitch");
     return knopfs.forEach(function(knopf) {
       return knopf.changed(0);
     });

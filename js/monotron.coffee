@@ -20,11 +20,11 @@ class Monotron
   noteOn: (frequency, time) ->
     time ?= @context.currentTime
     @vco.frequency.setValueAtTime frequency, time
-    @output.gain.linearRampToValueAtTime 1.0, time + 0.05
+    @output.gain.linearRampToValueAtTime 1.0, time + 0.1
 
   noteOff: (time) ->
     time ?= @context.currentTime
-    @output.gain.linearRampToValueAtTime 0.0, time + 0.05
+    @output.gain.linearRampToValueAtTime 0.0, time + 0.1
 
   connect: (target) ->
     @output.connect target
@@ -68,9 +68,12 @@ noteToFrequency = (note) ->
   Math.pow(2, (note - 69) / 12) * 440.0
 
 $ ->
-  audioContext = new webkitAudioContext()
+  audioContext = new (AudioContext ? webkitAudioContext)()
   window.monotron = new Monotron(audioContext)
-  monotron.connect audioContext.destination
+  masterGain = audioContext.createGain()
+  masterGain.gain.value = 0.7 # to prevent clipping
+  masterGain.connect audioContext.destination
+  monotron.connect masterGain
 
   keyboard = new RibbonKeyboard($('#keyboard'), monotron)
 
@@ -123,11 +126,11 @@ $ ->
 
   # the initial "patch"
   $("#pitch").val 57
-  $("#rate").val 48
-  $("#int").val 60
-  $("#cutoff").val 44
-  $("#peak").val 68
-  $("#mod").val "Cutoff"
+  $("#rate").val 46
+  $("#int").val 97
+  $("#cutoff").val 72
+  $("#peak").val 57
+  $("#mod").val "Pitch"
 
   knopfs.forEach (knopf) ->
     knopf.changed 0

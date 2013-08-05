@@ -376,6 +376,7 @@ h1,
 h2,
 h3 {
   font-family: "Audiowide", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 400;
   margin: 0;
 }
 #monotron {
@@ -401,30 +402,20 @@ h3 {
 #brand #title {
   font-size: 2.6180339927953202rem;
   text-transform: lowercase;
-  letter-spacing: 0.38196601065988556rem;
+  letter-spacing: 0.05em;
 }
 #brand #description {
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  font-weight: bold;
 }
 #controls {
-  margin-bottom: 1.61803399rem;
   display: -webkit-flex;
   display: -moz-flex;
   display: -ms-flexbox;
   display: -ms-flex;
   display: flex;
 }
-#controls:before,
-#controls:after {
-  content: " ";
-  display: table;
-}
-#controls:after {
-  clear: both;
-}
 #controls .panel {
-  float: left;
   padding: 1rem;
   -webkit-flex: 1;
   -moz-flex: 1;
