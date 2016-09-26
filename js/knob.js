@@ -15,7 +15,6 @@ Knob = function(input, ui) {
   this.min = settings.min;
 
   this.ui = ui;
-  input.addEventListener('change', this.changed.bind(this), false);
 
   var events = {
     keydown: this._handleKeyEvents.bind(this),
@@ -56,8 +55,9 @@ Knob.prototype = {
   },
 
   _handleMove: function(onMove, onEnd) {
-    this.centerX = this.container.offsetLeft + this.settings.width / 2;
-    this.centerY = this.container.offsetTop + this.settings.height / 2;
+    this.centerX = Math.floor(this.container.getBoundingClientRect().left)+ document.body.scrollLeft + this.settings.width / 2;
+    this.centerY = Math.floor(this.container.getBoundingClientRect().top)+ document.body.scrollTop + this.settings.height / 2;
+
     var fnc = this._updateWhileMoving.bind(this);
     var body = document.body;
     body.addEventListener(onMove, fnc, false);
@@ -89,12 +89,30 @@ Knob.prototype = {
     var step = (this.settings.max - this.min) / range;
     this.value = this.input.value = Math.round(value / step) * step;
     this.ui.update(percent, this.value);
+    this.triggerChange();
   },
 
   changed: function(direction) {
     this.input.value = this.limit(parseFloat(this.input.value) + direction * (this.input.step || 1));
     this.value = this.input.value;
     this.ui.update(this._valueToPercent(), this.value);
+    this.triggerChange();
+  },
+
+  update: function(value) {
+    this.input.value = this.limit(value);
+    this.value = this.input.value;
+    this.ui.update(this._valueToPercent(), this.value);
+    this.triggerChange();
+  },
+
+  triggerChange: function  () {
+    if (document.createEventObject) {
+      var evt = document.createEventObject();
+      this.input.fireEvent("onchange", evt);
+    } else {
+      this.input.dispatchEvent(new Event('change'));
+    }
   },
 
   _valueToPercent: function() {
@@ -104,18 +122,25 @@ Knob.prototype = {
   limit: function(value) {
     return Math.min(Math.max(this.settings.min, value), this.settings.max);
   },
+
   _getSettings: function(input) {
+    var labels;
+
+    if(input.dataset.labels){
+      labels = input.dataset.labels.split(',');
+    }
     var settings = {
-      max: parseFloat(input.max),
-      min: parseFloat(input.min),
+      max: labels ? labels.length-1 : parseFloat(input.max),
+      min: labels ? 0 : parseFloat(input.min),
       step: parseFloat(input.step) || 1,
       angleoffset: 0,
-      anglerange: 360
+      anglerange: 360,
+      labels: labels
     };
     settings.range = settings.max - settings.min;
     var data = input.dataset;
     for (var i in data) {
-      if (data.hasOwnProperty(i)) {
+      if (data.hasOwnProperty(i) && i!=='labels') {
         var value = +data[i];
         settings[i] = isNaN(value) ? data[i] : value;
       }
@@ -206,6 +231,7 @@ Ui.Pointer.prototype.createElement = function(parentEl) {
       this.options.pointerHeight, this.width / 2,
       this.options.pointerHeight / 2 + this.options.offset);
   }
+  this.el.addClassName('pointer');
   this.appendTo(parentEl);
 
 };
@@ -244,16 +270,18 @@ Ui.Scale.prototype.createElement = function(parentEl) {
   this.el.create("g");
   this.el.addClassName('scale');
   if (this.options.drawScale) {
-    var step = this.options.anglerange / this.options.steps;
-    var end = this.options.steps + (this.options.anglerange == 360 ? 0 : 1);
-    this.ticks = [];
-    var Shape = this.options.type;
-    for (var i = 0; i < end; i++) {
-      var rect = new Shape(this.options.tickWidth, this.options.tickHeight, this.width / 2,
-        this.options.tickHeight / 2);
-      rect.rotate(this.startAngle + i * step, this.width / 2, this.height / 2);
-      this.el.append(rect);
-      this.ticks.push(rect);
+    if(!this.options.labels){
+      var step = this.options.anglerange / this.options.steps;
+      var end = this.options.steps + (this.options.anglerange == 360 ? 0 : 1);
+      this.ticks = [];
+      var Shape = this.options.type;
+      for (var i = 0; i < end; i++) {
+        var rect = new Shape(this.options.tickWidth, this.options.tickHeight, this.width / 2,
+          this.options.tickHeight / 2);
+        rect.rotate(this.startAngle + i * step, this.width / 2, this.height / 2);
+        this.el.append(rect);
+        this.ticks.push(rect);
+      }
     }
   }
   this.appendTo(parentEl);
@@ -268,12 +296,26 @@ Ui.Scale.prototype.dial = function() {
   var dialStep = (this.options.max - min) / this.options.steps;
   var end = this.options.steps + (this.options.anglerange == 360 ? 0 : 1);
   this.dials = [];
-  for (var i = 0; i < end; i++) {
-    var text = new Ui.El.Text(Math.abs(min + dialStep * i), this.width / 2 - 2.5,
-      this.height / 2 - this.options.radius, 5, 5);
-    this.el.append(text);
-    text.rotate(this.startAngle + i * step, this.width / 2, this.height / 2);
-    this.dials.push(text);
+  if(!this.options.labels){
+    for (var i = 0; i < end; i++) {
+      var text = new Ui.El.Text(Math.abs(min + dialStep * i), this.width / 2 - 2.5,
+        this.height / 2 - this.options.radius, 5, 5);
+      this.el.append(text);
+      text.rotate(this.startAngle + i * step, this.width / 2, this.height / 2);
+      this.dials.push(text);
+    }
+  } else {
+    step = this.options.anglerange / (this.options.labels.length-1);
+    for(var i=0; i<this.options.labels.length; i++){
+      var label = this.options.labels[i];
+      var text = new Ui.El.Text(label, this.width / 2 - 2.5,
+        this.height / 2 - this.options.radius, 5, 5);
+      this.el.append(text);
+      text.rotate(this.startAngle + i * step, this.width / 2, this.height / 2);
+      text.attr('text-anchor', 'middle');
+      this.dials.push(text);
+    }
+
   }
 };
 
@@ -409,7 +451,10 @@ Ui.El.Text.prototype.center = function(element) {
 
 Ui.El.Arc = function(options) {
   this.options = options;
-  this.options.angleoffset = (options.angleoffset || 0) - 90;
+  //when there are lables, do not shift the arc other wise it will be 180 degree off
+  //compared to the labels
+  this.options.angleoffset = (options.angleoffset || 0) - (this.options.labels?0:90);
+
   this.create('path');
 };
 

@@ -12,8 +12,8 @@ class Monotron
     @vcf.connect @output
 
     @output.gain.value = 0
-    @vco.type = @vco.SAWTOOTH
-    @lfo.type = @lfo.SAWTOOTH
+    @vco.type = 'sawtooth'
+    @lfo.type = 'sawtooth'
     @vco.start @context.currentTime
     @lfo.start @context.currentTime
 
@@ -104,17 +104,15 @@ $ ->
     knopfs.push knopf
     param = params[knob.id]
     if param?
-      knopf.changed = ->
-        Knob.prototype.changed.apply this, arguments
+      $(@).change (e) ->
         # convert to log scale
         scale = param.scale ? 1.05
-        ratio = Math.pow(scale, @value) / Math.pow(scale, @settings.max)
+        ratio = Math.pow(scale, parseInt(knopf.value)) / Math.pow(scale, knopf.settings.max)
         value = ratio * (param.max - param.min) + param.min
         param.param.setValueAtTime value, audioContext.currentTime
     else if knob.id == "pitch"
-      knopf.changed = ->
-        Knob.prototype.changed.apply this, arguments
-        keyboard.minNote = parseInt @value
+      $(@).change (e) ->
+        keyboard.minNote = parseInt knopf.value
 
   $('#mod').change (e) ->
     target = $(this).find(":selected").val()

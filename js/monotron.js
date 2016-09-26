@@ -15,8 +15,8 @@
       this.lfoGain.connect(this.vcf.frequency);
       this.vcf.connect(this.output);
       this.output.gain.value = 0;
-      this.vco.type = this.vco.SAWTOOTH;
-      this.lfo.type = this.lfo.SAWTOOTH;
+      this.vco.type = 'sawtooth';
+      this.lfo.type = 'sawtooth';
       this.vco.start(this.context.currentTime);
       this.lfo.start(this.context.currentTime);
     }
@@ -141,19 +141,17 @@
       knopfs.push(knopf);
       param = params[knob.id];
       if (param != null) {
-        return knopf.changed = function() {
+        return $(this).change(function(e) {
           var ratio, scale, value, _ref;
-          Knob.prototype.changed.apply(this, arguments);
           scale = (_ref = param.scale) != null ? _ref : 1.05;
-          ratio = Math.pow(scale, this.value) / Math.pow(scale, this.settings.max);
+          ratio = Math.pow(scale, parseInt(knopf.value)) / Math.pow(scale, knopf.settings.max);
           value = ratio * (param.max - param.min) + param.min;
           return param.param.setValueAtTime(value, audioContext.currentTime);
-        };
+        });
       } else if (knob.id === "pitch") {
-        return knopf.changed = function() {
-          Knob.prototype.changed.apply(this, arguments);
-          return keyboard.minNote = parseInt(this.value);
-        };
+        return $(this).change(function(e) {
+          return keyboard.minNote = parseInt(knopf.value);
+        });
       }
     });
     $('#mod').change(function(e) {
